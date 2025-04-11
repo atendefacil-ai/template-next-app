@@ -1,0 +1,28 @@
+name: Build and Push Docker image
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Login no GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT_ATENDEFACIL_AI }}
+
+      - name: Build da imagem Docker
+        run: |
+          docker build -t ghcr.io/atendefacil-ai/${{ github.event.repository.name }}:latest .
+
+      - name: Push da imagem
+        run: |
+          docker push ghcr.io/atendefacil-ai/${{ github.event.repository.name }}:latest
